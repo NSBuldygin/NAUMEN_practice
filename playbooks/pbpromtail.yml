@@ -1,0 +1,40 @@
+--- 
+- 
+  become: true
+  hosts: servers
+  name: Promtail
+  tasks: 
+    - name: "Promtail"
+      copy: 
+        src: /etc/ansible/source/promtail
+        dest: /usr/local/bin/promtail
+        mode: 0755
+    - name: "MkDirConfig"
+      file:
+        path: /etc/promtail
+        state: directory
+        mode: 0755
+    - name: "Promtail.yml"
+      copy: 
+        src: /etc/ansible/source/promtail.yaml 
+        dest: /etc/promtail/promtail.yaml
+        mode: 0755
+    - name: "Promtail.service"
+      copy: 
+        src: /etc/ansible/source/promtail.service 
+        dest: /etc/systemd/system/promtail.service 
+        mode: 0755
+    - name: "DeamonReload"
+      systemd:
+        daemon-reload: yes
+    - name: "Enable"
+      systemd:
+        name: promtail
+        enabled: yes
+        state: restarted
+    - name: "Status"
+      register: result
+      shell: "systemctl status promtail"
+    - debug: 
+        var: result.stdout_lines
+      name: "Status"

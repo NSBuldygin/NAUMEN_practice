@@ -1,0 +1,12 @@
+
+---
+-
+  become: true
+  hosts: servers
+  name: Buddyscript
+  tasks:
+    - name: "Script"
+      copy:
+        src: /etc/ansible/source/buddyscript.py
+        dest: /home/buddyscript.py
+        mode: 0777

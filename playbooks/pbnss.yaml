@@ -1,0 +1,22 @@
+--- 
+- 
+  become: true
+  hosts: all
+  name: "Naucore Show Srvice"
+  tasks: 
+    - 
+      register: result
+      shell: naucore show service
+    - 
+      name: Service
+      debug: 
+       var: result.stdout_lines
+    - 
+      register: result2
+      shell: df -h
+    - 
+      name: Disk
+      debug:
+       var: result2.stdout_lines
+     
+

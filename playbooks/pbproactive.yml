@@ -1,0 +1,48 @@
+--- 
+- 
+  become: true
+  hosts: servers
+  name: proactive
+  tasks: 
+    - 
+      name: "Srvices Logs"
+      shell: "ionice -c 3 egrep \"[0-9]{3}\\s(ERROR|CRITICAL|FATAL)\" /opt/naumen/nauphone/log/nau*.log > /opt/naumen/nauphone/log/proactive.log"
+    - 
+      name: Catalina
+      shell: ionice -c 3 egrep "(ERROR|CRITICAL|FATAL)" /opt/naucrm/server/logs/catalina.out  >> /opt/naumen/nauphone/log/proactive.log
+    -
+      name: Services
+      register: result
+      shell: "naucore show service"
+    -
+      debug:
+        var: result.stdout_lines
+      name: "Naucore Show Service"
+    -
+      name: Disk
+      register: result2
+      shell: "df -h"
+    -
+      debug:
+        var: result2.stdout_lines
+      name: "df -h"
+    -
+      name: "Show Sessions"
+      shell: "python /home/buddyscript.py"
+    -
+      name: "Show sessions"
+      register: result3
+      shell: grep -A 5 'show sessions' /opt/naumen/nauphone/log/naubuddy.log 
+    -
+      debug:
+        var: result3.stdout_lines
+      name: "Show sessions"
+#    - 
+#      name: "Unconverted audio recordings"
+#      register: result4
+#      shell: find /opt/naumen/nauphone/spool/nautel/records -name "*.raw"
+#    -
+#      debug:
+#        var: result4.stdout_lines
+#      name: "Unconverted audio recordings"
+
